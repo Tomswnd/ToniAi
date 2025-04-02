@@ -18,9 +18,9 @@ if not OPENAI_API_KEY:
     raise ValueError("OPENAI_API_KEY environment variable not set")
 
 # OpenAI model configuration
-# the newest OpenAI model is "gpt-4o" which was released May 13, 2024.
-# do not change this unless explicitly requested by the user
-OPENAI_MODEL = "gpt-4o"
+# Utilizzando la versione mini che è più veloce e meno costosa
+# Cambiato su richiesta dell'utente dal modello "gpt-4o" al modello "gpt-4o-mini"
+OPENAI_MODEL = "gpt-4o-mini"
 
 # Bot owner information
 BOT_OWNER = "@ityttmom"
