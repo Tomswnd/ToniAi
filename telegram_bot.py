@@ -1,11 +1,4 @@
-from telegram import Update
-from telegram.ext import (
-    Application,
-    CommandHandler,
-    MessageHandler,
-    filters,
-    CallbackContext
-)
+import telebot
 import logging
 from config import TELEGRAM_TOKEN
 from openai_handler import OpenAIHandler
@@ -16,78 +9,68 @@ logger = logging.getLogger(__name__)
 # Initialize the OpenAI handler
 openai_handler = OpenAIHandler()
 
-async def start_command(update: Update, context: CallbackContext) -> None:
+# Initialize the bot
+bot = telebot.TeleBot(TELEGRAM_TOKEN)
+
+@bot.message_handler(commands=['start'])
+def start_command(message):
     """Send a message when the command /start is issued."""
-    user = update.effective_user
-    await update.message.reply_text(
-        f"Hi {user.first_name}! 👋 I'm an AI-powered assistant bot.\n\n"
-        f"You can ask me questions or chat with me about almost anything!\n\n"
-        f"Here are some commands you can use:\n"
-        f"/start - Show this welcome message\n"
-        f"/help - Show available commands\n"
-        f"/reset - Reset our conversation history\n\n"
-        f"What would you like to talk about today?"
+    user_first_name = message.from_user.first_name
+    welcome_message = (
+        f"Ciao {user_first_name}! 👋\n\n"
+        "Sono un bot alimentato da intelligenza artificiale utilizzando il modello GPT-4o di OpenAI.\n\n"
+        "Puoi chiedermi qualsiasi cosa e cercherò di aiutarti nel migliore dei modi.\n\n"
+        "Usa /reset per cancellare la cronologia della conversazione e iniziare una nuova chat.\n"
+        "Usa /help per vedere l'elenco dei comandi disponibili."
     )
+    bot.reply_to(message, welcome_message)
 
-async def help_command(update: Update, context: CallbackContext) -> None:
+@bot.message_handler(commands=['help'])
+def help_command(message):
     """Send a message when the command /help is issued."""
-    await update.message.reply_text(
-        "Here are the commands you can use:\n\n"
-        "/start - Start the bot and see the welcome message\n"
-        "/help - Show this help message\n"
-        "/reset - Reset our conversation history\n\n"
-        "Just send me a message, and I'll respond using AI!"
+    help_message = (
+        "Ecco i comandi disponibili:\n\n"
+        "/start - Inizia una conversazione con il bot\n"
+        "/help - Mostra questa lista di comandi\n"
+        "/reset - Cancella la cronologia della conversazione e inizia una nuova chat\n\n"
+        "Puoi semplicemente scrivermi un messaggio e io risponderò!"
     )
+    bot.reply_to(message, help_message)
 
-async def reset_command(update: Update, context: CallbackContext) -> None:
+@bot.message_handler(commands=['reset'])
+def reset_command(message):
     """Reset the conversation history for a user."""
-    user_id = update.effective_user.id
+    user_id = message.from_user.id
     response = openai_handler.reset_conversation(user_id)
-    await update.message.reply_text(response)
+    bot.reply_to(message, response)
 
-async def handle_message(update: Update, context: CallbackContext) -> None:
+@bot.message_handler(func=lambda message: True)
+def handle_message(message):
     """Handle incoming messages and generate responses."""
-    user_id = update.effective_user.id
-    message_text = update.message.text
+    user_id = message.from_user.id
+    message_text = message.text
     
     # Send typing action to indicate the bot is processing
-    await context.bot.send_chat_action(
-        chat_id=update.effective_chat.id, 
-        action="typing"
-    )
+    bot.send_chat_action(message.chat.id, 'typing')
     
     logger.info(f"Received message from user {user_id}: {message_text}")
     
-    # Generate response using OpenAI
-    response = openai_handler.generate_response(user_id, message_text)
-    
-    # Send the response back to the user
-    await update.message.reply_text(response)
-
-async def error_handler(update: Update, context: CallbackContext) -> None:
-    """Handle errors and exceptions."""
-    logger.error(f"Update {update} caused error {context.error}")
-    
-    # Only send message if there's an update object
-    if update:
-        await update.effective_message.reply_text(
-            "Sorry, something went wrong. Please try again later."
+    try:
+        # Generate response using OpenAI
+        response = openai_handler.generate_response(user_id, message_text)
+        
+        # Send the response back to the user
+        bot.reply_to(message, response)
+    except Exception as e:
+        logger.error(f"Error generating response: {e}")
+        bot.reply_to(
+            message,
+            "Mi dispiace, ma ho riscontrato un problema nell'elaborare la tua richiesta. "
+            "Riprova più tardi o resetta la conversazione con /reset."
         )
 
-def create_application():
-    """Create and configure the bot application."""
-    # Create the Application
-    application = Application.builder().token(TELEGRAM_TOKEN).build()
-
-    # Add command handlers
-    application.add_handler(CommandHandler("start", start_command))
-    application.add_handler(CommandHandler("help", help_command))
-    application.add_handler(CommandHandler("reset", reset_command))
-    
-    # Add message handler
-    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
-    
-    # Add error handler
-    application.add_error_handler(error_handler)
-    
-    return application
+def run_bot():
+    """Run the bot synchronously."""
+    logger.info("Starting Telegram bot...")
+    bot.infinity_polling(timeout=10, long_polling_timeout=5)
+    logger.info("Bot polling stopped")

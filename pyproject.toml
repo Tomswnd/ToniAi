@@ -10,6 +10,7 @@ dependencies = [
     "gunicorn>=23.0.0",
     "openai>=1.70.0",
     "psycopg2-binary>=2.9.10",
+    "pytelegrambotapi>=4.26.0",
     "python-telegram-bot>=22.0",
     "telegram>=0.0.1",
 ]
