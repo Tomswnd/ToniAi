@@ -94,5 +94,61 @@
     "first_name": "tommaso",
     "user_message": "/gruppi",
     "bot_response": "Sembra che tu stia cercando informazioni sui gruppi su Telegram. Vuoi sapere come creare un gruppo, come unirti a uno, o hai bisogno di aiuto con qualcosa di specifico riguardo ai gruppi? Fammi sapere!"
+  },
+  {
+    "timestamp": "2025-04-02T23:02:11.632676",
+    "user_id": 713164389,
+    "username": "ityttmom",
+    "first_name": "tommaso",
+    "user_message": "debug",
+    "bot_response": "Could you please provide more details about what you're trying to debug? Are you working on code, or is it something else? I'm here to help!"
+  },
+  {
+    "timestamp": "2025-04-02T23:02:22.110998",
+    "user_id": 713164389,
+    "username": "ityttmom",
+    "first_name": "tommaso",
+    "user_message": "(debug",
+    "bot_response": "It looks like you might be trying to run a command or script. Could you clarify what you need help with? Are you debugging code, a specific program, or something else? Let me know so I can assist you better!"
+  },
+  {
+    "timestamp": "2025-04-02T23:02:28.456227",
+    "user_id": 713164389,
+    "username": "ityttmom",
+    "first_name": "tommaso",
+    "user_message": "/debug",
+    "bot_response": "It seems like you're trying to use a command, possibly in a bot or application. If you need help with debugging something specific, please provide more context or details about the issue you're facing. I'm here to help!"
+  },
+  {
+    "timestamp": "2025-04-02T23:02:40.185076",
+    "user_id": 713164389,
+    "username": "ityttmom",
+    "first_name": "tommaso",
+    "user_message": "/debug",
+    "bot_response": "It looks like you're entering a command that might be specific to a bot or application. If you need assistance with debugging or any specific issue, please share more details, and I'll do my best to help you out!"
+  },
+  {
+    "timestamp": "2025-04-02T23:02:51.498164",
+    "user_id": 713164389,
+    "username": "ityttmom",
+    "first_name": "tommaso",
+    "user_message": "Che versione di chatgptusi",
+    "bot_response": "Sono basato su una versione di GPT-3.5, addestrata fino a ottobre 2023. Se hai domande o hai bisogno di aiuto, chiedi pure!"
+  },
+  {
+    "timestamp": "2025-04-02T23:03:06.159401",
+    "user_id": 713164389,
+    "username": "ityttmom",
+    "first_name": "tommaso",
+    "user_message": "Non usi 4o-mini?",
+    "bot_response": "No, attualmente non utilizzo GPT-4 o GPT-4 Mini. Sono basato su GPT-3.5. Se hai domande specifiche o hai bisogno di assistenza, chiedi pure!"
+  },
+  {
+    "timestamp": "2025-04-02T23:04:20.712589",
+    "user_id": 713164389,
+    "username": "ityttmom",
+    "first_name": "tommaso",
+    "user_message": "Toniai /reset",
+    "bot_response": "It seems like you're trying to reset something. Could you clarify what you would like to reset? I'm here to help!"
   }
 ]
