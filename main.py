@@ -8,7 +8,7 @@ import requests
 from flask import Flask, jsonify, render_template, make_response
 import atexit
 from openai import OpenAI
-from config import OPENAI_API_KEY
+from config import OPENAI_API_KEY, BOT_OWNER
 
 # Configure logging
 logging.basicConfig(
@@ -128,7 +128,8 @@ def index():
                             </div>
                         </div>
                         <div class="card-footer text-center">
-                            <small>Bot sviluppato con Python, Flask e OpenAI</small>
+                            <small>Bot sviluppato con Python, Flask e OpenAI</small><br>
+                            <small>Proprietario: {BOT_OWNER} su Telegram</small>
                         </div>
                     </div>
                 </div>

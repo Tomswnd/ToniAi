@@ -1,6 +1,6 @@
 import telebot
 import logging
-from config import TELEGRAM_TOKEN
+from config import TELEGRAM_TOKEN, BOT_OWNER
 from openai_handler import OpenAIHandler
 
 # Set up logging
@@ -19,6 +19,7 @@ def start_command(message):
     welcome_message = (
         f"Ciao {user_first_name}! 👋\n\n"
         "Sono un bot alimentato da intelligenza artificiale utilizzando il modello GPT-4o di OpenAI.\n\n"
+        f"Sono stato creato da {BOT_OWNER} su Telegram.\n\n"
         "Puoi chiedermi qualsiasi cosa e cercherò di aiutarti nel migliore dei modi.\n\n"
         "Usa /reset per cancellare la cronologia della conversazione e iniziare una nuova chat.\n"
         "Usa /help per vedere l'elenco dei comandi disponibili."
@@ -33,7 +34,8 @@ def help_command(message):
         "/start - Inizia una conversazione con il bot\n"
         "/help - Mostra questa lista di comandi\n"
         "/reset - Cancella la cronologia della conversazione e inizia una nuova chat\n\n"
-        "Puoi semplicemente scrivermi un messaggio e io risponderò!"
+        "Puoi semplicemente scrivermi un messaggio e io risponderò!\n\n"
+        f"Questo bot è stato sviluppato da {BOT_OWNER} su Telegram."
     )
     bot.reply_to(message, help_message)
 
@@ -53,7 +55,9 @@ def get_fallback_response(message_text):
         "ciao": "Ciao! Come posso aiutarti oggi?",
         "come stai": "Sto bene, grazie! Sono qui per aiutarti.",
         "grazie": "Prego! Sono felice di esserti stato utile.",
-        "chi sei": "Sono un bot di assistenza creato per aiutarti con le tue domande.",
+        "chi sei": f"Sono un bot di assistenza creato da {BOT_OWNER} su Telegram per aiutarti con le tue domande.",
+        "chi ti ha creato": f"Sono stato creato da {BOT_OWNER} su Telegram.",
+        "chi è il tuo proprietario": f"Il mio proprietario è {BOT_OWNER} su Telegram.",
         "cosa puoi fare": "Posso rispondere alle tue domande su vari argomenti quando l'intelligenza artificiale è disponibile. Al momento sto operando in modalità limitata.",
         "aiuto": "Usa /help per vedere la lista dei comandi disponibili."
     }

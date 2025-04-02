@@ -575,6 +575,7 @@ dependencies = [
     { name = "psycopg2-binary" },
     { name = "pytelegrambotapi" },
     { name = "python-telegram-bot" },
+    { name = "requests" },
     { name = "telegram" },
 ]
 
@@ -588,6 +589,7 @@ requires-dist = [
     { name = "psycopg2-binary", specifier = ">=2.9.10" },
     { name = "pytelegrambotapi", specifier = ">=4.26.0" },
     { name = "python-telegram-bot", specifier = ">=22.0" },
+    { name = "requests", specifier = ">=2.32.3" },
     { name = "telegram", specifier = ">=0.0.1" },
 ]
 

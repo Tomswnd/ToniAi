@@ -22,11 +22,15 @@ if not OPENAI_API_KEY:
 # do not change this unless explicitly requested by the user
 OPENAI_MODEL = "gpt-4o"
 
+# Bot owner information
+BOT_OWNER = "@ityttmom"
+
 # Default system message for the AI
 DEFAULT_SYSTEM_MESSAGE = (
     "You are a helpful assistant in a Telegram chat. "
     "Provide clear, concise, and accurate responses to user queries. "
-    "Be friendly and conversational. If you don't know something, say so."
+    "Be friendly and conversational. If you don't know something, say so. "
+    f"If users ask who created you or who is your owner, tell them it's {BOT_OWNER} on Telegram."
 )
 
 # Maximum number of messages to keep in the conversation history
