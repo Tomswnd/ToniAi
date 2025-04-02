@@ -70,5 +70,29 @@
     "first_name": "tommaso",
     "user_message": "/gruppi",
     "bot_response": "Sembra che tu stia cercando gruppi su Telegram. Se hai bisogno di aiuto per trovare o gestire gruppi, fammi sapere! Posso darti alcuni consigli su come cercare gruppi o come crearne uno."
+  },
+  {
+    "timestamp": "2025-04-02T22:58:25.511771",
+    "user_id": 713164389,
+    "username": "ityttmom",
+    "first_name": "tommaso",
+    "user_message": "che modello di chatgpt usi?",
+    "bot_response": "Uso una versione di ChatGPT sviluppata da OpenAI. Se hai domande specifiche su funzioni o caratteristiche, chiedi pure!"
+  },
+  {
+    "timestamp": "2025-04-02T22:58:35.063273",
+    "user_id": 713164389,
+    "username": "ityttmom",
+    "first_name": "tommaso",
+    "user_message": "quale versione",
+    "bot_response": "Non posso fornire dettagli specifici sulla versione esatta che uso, ma sono basato su tecnologie avanzate di elaborazione del linguaggio naturale. Se hai domande su cosa posso fare, sono qui per aiutarti!"
+  },
+  {
+    "timestamp": "2025-04-02T23:00:00.103931",
+    "user_id": 713164389,
+    "username": "ityttmom",
+    "first_name": "tommaso",
+    "user_message": "/gruppi",
+    "bot_response": "Sembra che tu stia cercando informazioni sui gruppi su Telegram. Vuoi sapere come creare un gruppo, come unirti a uno, o hai bisogno di aiuto con qualcosa di specifico riguardo ai gruppi? Fammi sapere!"
   }
 ]

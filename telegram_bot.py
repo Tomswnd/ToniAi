@@ -1,7 +1,7 @@
 import telebot
 import logging
 import datetime
-from config import TELEGRAM_TOKEN, BOT_OWNER
+from config import TELEGRAM_TOKEN, BOT_OWNER, OPENAI_MODEL
 from openai_handler import OpenAIHandler
 from chat_logger import chat_logger
 
@@ -39,7 +39,7 @@ def start_command(message):
     user_first_name = message.from_user.first_name
     welcome_message = (
         f"Ciao {user_first_name}! 👋\n\n"
-        "Sono un bot alimentato da intelligenza artificiale utilizzando il modello GPT-4o di OpenAI.\n\n"
+        f"Sono un bot alimentato da intelligenza artificiale utilizzando il modello {OPENAI_MODEL} di OpenAI.\n\n"
         f"Sono stato creato da {BOT_OWNER} su Telegram.\n\n"
     )
     
@@ -103,7 +103,8 @@ def help_command(message):
             "toniai /gruppi - Informazioni sull'uso nei gruppi\n\n"
             "Puoi anche usare: /comando@" + bot_username + "\n\n"
             "Esempio: toniai raccontami una storia\n\n"
-            f"Questo bot è stato sviluppato da {BOT_OWNER} su Telegram."
+            f"Questo bot utilizza il modello AI: {OPENAI_MODEL}\n"
+            f"Sviluppato da {BOT_OWNER} su Telegram."
         )
     else:
         help_message = (
@@ -113,7 +114,8 @@ def help_command(message):
             "/reset - Cancella la cronologia della conversazione\n"
             "/gruppi - Informazioni sull'uso del bot nei gruppi\n\n"
             "Puoi semplicemente scrivermi un messaggio e io risponderò!\n\n"
-            f"Questo bot è stato sviluppato da {BOT_OWNER} su Telegram."
+            f"Questo bot utilizza il modello AI: {OPENAI_MODEL}\n"
+            f"Sviluppato da {BOT_OWNER} su Telegram."
         )
     
     bot.reply_to(message, help_message)
@@ -306,6 +308,7 @@ Puoi usare uno dei seguenti comandi:
 1. `toniai /comando` (es: `toniai /help`)
 2. `/comando@{bot_username}` (es: `/help@{bot_username}`)
 
+*Modello AI in uso:* `{OPENAI_MODEL}`
 *Puoi aggiungermi ai tuoi gruppi!*
 """
     
@@ -352,8 +355,9 @@ def debug_command(message):
 🔍 *Informazioni di Debug del Bot*
 
 👤 *Bot Username:* @{bot_username}
-⚙️ *Versione:* 1.0.2 (Debug patch 3)
+⚙️ *Versione:* 1.0.2 (Debug patch 4)
 🕒 *Ultimo riavvio:* {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+🤖 *Modello AI:* {OPENAI_MODEL}
 
 *Stati interni:*
 - Chat ID attuale: `{message.chat.id}`
