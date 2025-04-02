@@ -6,5 +6,21 @@
     "first_name": "tommaso",
     "user_message": "ef",
     "bot_response": "Hello! It looks like you sent \"ef.\" Could you clarify your message or let me know how I can assist you? 😊"
+  },
+  {
+    "timestamp": "2025-04-02T22:39:36.603891",
+    "user_id": 713164389,
+    "username": "ityttmom",
+    "first_name": "tommaso",
+    "user_message": "Prova",
+    "bot_response": "Ciao! Come posso aiutarti oggi?"
+  },
+  {
+    "timestamp": "2025-04-02T22:41:21.939855",
+    "user_id": 713164389,
+    "username": "ityttmom",
+    "first_name": "tommaso",
+    "user_message": "Funzioni nei gruppi?",
+    "bot_response": "Sì, posso funzionare anche nei gruppi! Posso aiutare a rispondere a domande, fornire informazioni e mantenere la conversazione su argomenti interessanti. Se hai bisogno di qualcosa di specifico, fammelo sapere!"
   }
 ]

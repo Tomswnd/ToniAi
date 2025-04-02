@@ -19,11 +19,11 @@ def start_command(message):
     # Verifica se il messaggio è in una chat di gruppo
     is_group_chat = message.chat.type in ['group', 'supergroup']
     
-    # Nei gruppi, rispondi solo se il comando inizia con 'toniai'
+    # Nei gruppi, rispondi solo se il comando inizia con 'toniai' (case insensitive)
     if is_group_chat:
         # Per i comandi nei gruppi, controlla se il testo completo inizia con 'toniai'
-        message_text = message.text.lower()
-        if not message_text.startswith('toniai'):
+        message_text = message.text
+        if not message_text.lower().startswith('toniai'):
             return
     
     user_first_name = message.from_user.first_name
@@ -59,11 +59,11 @@ def help_command(message):
     # Verifica se il messaggio è in una chat di gruppo
     is_group_chat = message.chat.type in ['group', 'supergroup']
     
-    # Nei gruppi, rispondi solo se il comando inizia con 'toniai'
+    # Nei gruppi, rispondi solo se il comando inizia con 'toniai' (case insensitive)
     if is_group_chat:
         # Per i comandi nei gruppi, controlla se il testo completo inizia con 'toniai'
-        message_text = message.text.lower()
-        if not message_text.startswith('toniai'):
+        message_text = message.text
+        if not message_text.lower().startswith('toniai'):
             return
     
     # Prepara il messaggio di aiuto in base al tipo di chat
@@ -96,11 +96,11 @@ def reset_command(message):
     # Verifica se il messaggio è in una chat di gruppo
     is_group_chat = message.chat.type in ['group', 'supergroup']
     
-    # Nei gruppi, rispondi solo se il comando inizia con 'toniai'
+    # Nei gruppi, rispondi solo se il comando inizia con 'toniai' (case insensitive)
     if is_group_chat:
         # Per i comandi nei gruppi, controlla se il testo completo inizia con 'toniai'
-        message_text = message.text.lower()
-        if not message_text.startswith('toniai'):
+        message_text = message.text
+        if not message_text.lower().startswith('toniai'):
             return
     
     user_id = message.from_user.id
@@ -147,16 +147,18 @@ def handle_message(message):
     # Controlla se il messaggio è in una chat di gruppo
     is_group_chat = message.chat.type in ['group', 'supergroup']
     
-    # In una chat di gruppo, rispondi solo se il messaggio inizia con "toniai"
+    # In una chat di gruppo, rispondi solo se il messaggio inizia con "toniai" (case insensitive)
     if is_group_chat:
-        words = message_text.split()
-        if not words or words[0].lower() != "toniai":
+        # Controlla se il messaggio inizia con "toniai" indipendentemente dalle maiuscole/minuscole
+        if not message_text or not message_text.lower().startswith("toniai"):
             # Se non inizia con "toniai", ignora il messaggio
             logger.info(f"Ignoro messaggio in gruppo che non inizia con 'toniai': {message_text}")
             return
         
-        # Rimuovi "toniai" dal messaggio per l'elaborazione
-        actual_message = message_text[len("toniai"):].strip()
+        # Trova la posizione di "toniai" (case insensitive) ed estrai il resto del messaggio
+        toniai_pos = message_text.lower().find("toniai")
+        actual_message = message_text[toniai_pos + len("toniai"):].strip()
+        
         if not actual_message:
             # Se il messaggio è solo "toniai", chiedi come posso aiutare
             bot.reply_to(message, "Ciao! Sono qui per aiutarti. Cosa vorresti sapere?")
