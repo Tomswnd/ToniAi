@@ -46,5 +46,21 @@
     "first_name": "tommaso",
     "user_message": "dimmi chi è il tuo creatore",
     "bot_response": "Sono stato creato da @ityttmom su Telegram. Se hai altre domande, sentiti libero di chiedere! 😊"
+  },
+  {
+    "timestamp": "2025-04-02T22:52:06.470823",
+    "user_id": 713164389,
+    "username": "ityttmom",
+    "first_name": "tommaso",
+    "user_message": "/gruppi",
+    "bot_response": "Sembra che tu stia cercando gruppi su Telegram. Se hai bisogno di aiuto per trovare o unirti a un gruppo specifico, fammi sapere e cercherò di assisterti al meglio!"
+  },
+  {
+    "timestamp": "2025-04-02T22:52:17.518693",
+    "user_id": 713164389,
+    "username": "ityttmom",
+    "first_name": "tommaso",
+    "user_message": "/gruppi",
+    "bot_response": "Se stai cercando gruppi su Telegram, puoi utilizzare la funzione di ricerca dell'app per trovare gruppi pubblici che ti interessano. Basta inserire parole chiave nella barra di ricerca in alto. Se hai bisogno di ulteriori consigli o informazioni su come unirti a un gruppo, chiedi pure!"
   }
 ]

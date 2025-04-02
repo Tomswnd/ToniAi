@@ -256,7 +256,7 @@ def handle_message(message):
             first_name=first_name
         )
 
-@bot.message_handler(commands=['gruppi', 'groups'])
+@bot.message_handler(commands=['gruppi', 'groups', 'group', 'gruppo', 'grupi', 'gruupi'])
 def groups_command(message):
     """Spiega come funziona il bot nei gruppi Telegram"""
     # Log del comando
@@ -271,10 +271,23 @@ def groups_command(message):
         message_text = message.text if message.text else ""
         logger.info(f"Testo comando in gruppo: '{message_text}'")
         
-        # Controlla anche se è un comando diretto al bot tramite @nome_bot
-        if (not message_text.lower().startswith('toniai') and 
-            not message_text.startswith('/gruppi@') and
-            not message_text.startswith('/groups@')):
+        # Controlla se è un comando diretto al bot tramite @nome_bot o inizia con toniai
+        
+        # Lista di tutti i possibili inizi di comando supportati
+        valid_prefixes = [
+            '/gruppi@', '/groups@', '/group@', '/gruppo@', '/grupi@', '/gruupi@', 
+            'toniai'
+        ]
+        
+        # Verifica se il messaggio inizia con uno dei prefissi validi
+        is_valid_command = False
+        for prefix in valid_prefixes:
+            if message_text.lower().startswith(prefix):
+                is_valid_command = True
+                logger.info(f"Comando valido trovato con prefisso: '{prefix}'")
+                break
+                
+        if not is_valid_command:
             logger.info(f"Comando ignorato in gruppo: '{message_text}'")
             return
     
@@ -294,8 +307,14 @@ Nei gruppi Telegram, rispondo solo ai messaggi che iniziano con la parola "tonia
 • `toniai qual è la capitale d'Italia?` → risponderò alla tua domanda
 • `ciao a tutti` → non risponderò (manca "toniai")
 
-*Comandi nei gruppi:*
-Puoi usare i comandi in due modi:
+*Comandi disponibili:*
+Puoi usare uno dei seguenti comandi:
+• `/help` - Mostra l'elenco completo dei comandi
+• `/start` - Inizia/riavvia una conversazione
+• `/reset` - Cancella la cronologia delle chat
+• `/gruppi` - Visualizza questa guida (anche `/groups`)
+
+*Nei gruppi* usa i comandi in uno di questi modi:
 1. `toniai /comando` (es: `toniai /help`)
 2. `/comando@{bot_username}` (es: `/help@{bot_username}`)
 
