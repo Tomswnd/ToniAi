@@ -44,6 +44,28 @@ def reset_command(message):
     response = openai_handler.reset_conversation(user_id)
     bot.reply_to(message, response)
 
+def get_fallback_response(message_text):
+    """Provide basic responses for common queries when OpenAI is not available"""
+    message_lower = message_text.lower()
+    
+    # Dictionary of common queries and their responses
+    fallback_responses = {
+        "ciao": "Ciao! Come posso aiutarti oggi?",
+        "come stai": "Sto bene, grazie! Sono qui per aiutarti.",
+        "grazie": "Prego! Sono felice di esserti stato utile.",
+        "chi sei": "Sono un bot di assistenza creato per aiutarti con le tue domande.",
+        "cosa puoi fare": "Posso rispondere alle tue domande su vari argomenti quando l'intelligenza artificiale è disponibile. Al momento sto operando in modalità limitata.",
+        "aiuto": "Usa /help per vedere la lista dei comandi disponibili."
+    }
+    
+    # Check if the message matches any key in the dictionary
+    for key, response in fallback_responses.items():
+        if key in message_lower:
+            return response
+    
+    # Default response if no match is found
+    return "Mi dispiace, al momento non posso generare risposte personalizzate a causa di limitazioni tecniche. Prova a usare /help per vedere i comandi disponibili o riprova più tardi."
+
 @bot.message_handler(func=lambda message: True)
 def handle_message(message):
     """Handle incoming messages and generate responses."""
@@ -63,11 +85,10 @@ def handle_message(message):
         bot.reply_to(message, response)
     except Exception as e:
         logger.error(f"Error generating response: {e}")
-        bot.reply_to(
-            message,
-            "Mi dispiace, ma ho riscontrato un problema nell'elaborare la tua richiesta. "
-            "Riprova più tardi o resetta la conversazione con /reset."
-        )
+        
+        # Use fallback response system when OpenAI is not available
+        fallback_response = get_fallback_response(message_text)
+        bot.reply_to(message, fallback_response)
 
 def run_bot():
     """Run the bot synchronously."""

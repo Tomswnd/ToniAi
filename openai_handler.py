@@ -66,7 +66,15 @@ class OpenAIHandler:
             
         except Exception as e:
             logger.error(f"Error generating response: {e}")
-            return (
-                "I'm having trouble connecting to my brain right now. "
-                "Please try again in a moment."
-            )
+            if "insufficient_quota" in str(e):
+                return (
+                    "Mi dispiace, ma al momento non posso accedere all'intelligenza artificiale "
+                    "a causa di un problema con il limite di utilizzo. "
+                    "Il proprietario del bot è stato avvisato del problema. "
+                    "Riprova più tardi."
+                )
+            else:
+                return (
+                    "Mi dispiace, ma sto avendo problemi a connettermi all'intelligenza artificiale. "
+                    "Riprova tra qualche momento."
+                )
