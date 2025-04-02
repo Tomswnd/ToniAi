@@ -39,3 +39,7 @@ MAX_CONVERSATION_HISTORY = 10
 # Response generation settings
 MAX_TOKENS = 500
 TEMPERATURE = 0.7
+
+# Admin password per accedere al pannello di controllo
+# In un ambiente di produzione, questa dovrebbe essere in una variabile d'ambiente
+ADMIN_PASSWORD = "admin123"  # È preferibile sostituire questa password con una più complessa

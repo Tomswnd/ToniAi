@@ -2,6 +2,7 @@ import telebot
 import logging
 from config import TELEGRAM_TOKEN, BOT_OWNER
 from openai_handler import OpenAIHandler
+from chat_logger import chat_logger
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -75,6 +76,8 @@ def handle_message(message):
     """Handle incoming messages and generate responses."""
     user_id = message.from_user.id
     message_text = message.text
+    username = message.from_user.username
+    first_name = message.from_user.first_name
     
     # Send typing action to indicate the bot is processing
     bot.send_chat_action(message.chat.id, 'typing')
@@ -87,12 +90,30 @@ def handle_message(message):
         
         # Send the response back to the user
         bot.reply_to(message, response)
+        
+        # Log the message and response
+        chat_logger.log_message(
+            user_id=user_id,
+            user_message=message_text,
+            bot_response=response,
+            username=username,
+            first_name=first_name
+        )
     except Exception as e:
         logger.error(f"Error generating response: {e}")
         
         # Use fallback response system when OpenAI is not available
         fallback_response = get_fallback_response(message_text)
         bot.reply_to(message, fallback_response)
+        
+        # Log the message and fallback response
+        chat_logger.log_message(
+            user_id=user_id,
+            user_message=message_text,
+            bot_response=fallback_response,
+            username=username,
+            first_name=first_name
+        )
 
 def run_bot():
     """Run the bot synchronously."""

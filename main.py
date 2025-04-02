@@ -7,10 +7,11 @@ import threading
 import requests
 import time
 import datetime
-from flask import Flask, jsonify, render_template, make_response
+from flask import Flask, jsonify, render_template, make_response, request, redirect, url_for
 import atexit
 from openai import OpenAI
-from config import OPENAI_API_KEY, BOT_OWNER
+from config import OPENAI_API_KEY, BOT_OWNER, ADMIN_PASSWORD
+from chat_logger import chat_logger
 
 # Configure logging
 logging.basicConfig(
@@ -109,6 +110,10 @@ def index():
                             <div class="api-status text-center">
                                 <p>Stato API OpenAI: <span class="badge bg-{openai_status_color}">{openai_status_text}</span></p>
                                 <button class="btn btn-secondary" onclick="location.href='/check-openai'">Controlla API</button>
+                            </div>
+                            
+                            <div class="text-center mt-3">
+                                <a href="/admin" class="btn btn-outline-info">Area Amministrativa</a>
                             </div>
                             
                             <hr>
@@ -458,6 +463,327 @@ def cleanup():
 atexit.register(cleanup)
 
 # For direct execution (not used with gunicorn)
+# Funzioni per la visualizzazione e gestione delle chat
+@app.route('/admin')
+def admin_login():
+    """Pagina di login per l'area amministrativa"""
+    html_content = """
+    <!DOCTYPE html>
+    <html lang="it" data-bs-theme="dark">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Admin Login</title>
+        <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class="container py-5">
+            <div class="row">
+                <div class="col-md-6 mx-auto">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="text-center">Accesso Area Amministrativa</h2>
+                        </div>
+                        <div class="card-body">
+                            <form action="/admin/login" method="post">
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">Password</label>
+                                    <input type="password" class="form-control" id="password" name="password" required>
+                                </div>
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-primary">Accedi</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="card-footer text-center">
+                            <small>Accesso riservato all'amministratore del bot</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    
+    response = make_response(html_content)
+    response.headers['Content-Type'] = 'text/html'
+    return response
+
+@app.route('/admin/login', methods=['POST'])
+def admin_login_check():
+    """Verifica le credenziali di accesso"""
+    password = request.form.get('password')
+    
+    if password == ADMIN_PASSWORD:
+        # Redirect to admin panel
+        return redirect('/admin/chats')
+    else:
+        html_content = """
+        <!DOCTYPE html>
+        <html lang="it" data-bs-theme="dark">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Accesso Negato</title>
+            <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
+            <meta http-equiv="refresh" content="3;url=/admin" />
+        </head>
+        <body>
+            <div class="container py-5 text-center">
+                <div class="alert alert-danger">
+                    <h4>Password errata!</h4>
+                    <p>Verrai reindirizzato alla pagina di login...</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        
+        response = make_response(html_content)
+        response.headers['Content-Type'] = 'text/html'
+        return response
+
+@app.route('/admin/chats')
+def admin_chats():
+    """Pagina per visualizzare le chat degli utenti"""
+    # Verifica che l'utente sia autorizzato (qui semplificato, normalmente userei sessioni)
+    password = request.args.get('password')
+    if password != ADMIN_PASSWORD and 'password' not in request.args:
+        return redirect('/admin')
+    
+    # Ottieni l'elenco degli utenti
+    users = chat_logger.get_user_info()
+    
+    html_content = f"""
+    <!DOCTYPE html>
+    <html lang="it" data-bs-theme="dark">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Gestione Chat</title>
+        <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class="container py-4">
+            <div class="row mb-4">
+                <div class="col">
+                    <h1 class="text-center">Pannello Amministrativo Chat</h1>
+                    <p class="text-center text-muted">Visualizza le conversazioni degli utenti con il bot</p>
+                </div>
+            </div>
+            
+            <div class="row mb-4">
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h4 class="mb-0">Utenti ({len(users)})</h4>
+                            <a href="/" class="btn btn-sm btn-outline-secondary">Torna alla Home</a>
+                        </div>
+                        <div class="card-body p-0">
+    """
+    
+    if users:
+        html_content += """
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>ID Utente</th>
+                                            <th>Username</th>
+                                            <th>Nome</th>
+                                            <th>Ultimo Messaggio</th>
+                                            <th>Messaggi</th>
+                                            <th>Azioni</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+        """
+        
+        for user in users:
+            user_id = user.get('user_id', '')
+            username = user.get('username', 'Nessun username')
+            first_name = user.get('first_name', 'Nessun nome')
+            last_message = user.get('last_message_time', '').split('T')[0]  # Solo la data
+            message_count = user.get('message_count', 0)
+            
+            html_content += f"""
+                                        <tr>
+                                            <td>{user_id}</td>
+                                            <td>{username}</td>
+                                            <td>{first_name}</td>
+                                            <td>{last_message}</td>
+                                            <td>{message_count}</td>
+                                            <td>
+                                                <a href="/admin/chat/{user_id}?password={ADMIN_PASSWORD}" class="btn btn-sm btn-info">Visualizza</a>
+                                            </td>
+                                        </tr>
+            """
+            
+        html_content += """
+                                    </tbody>
+                                </table>
+                            </div>
+        """
+    else:
+        html_content += """
+                            <div class="alert alert-info m-3">
+                                <p class="mb-0">Nessun utente ha ancora interagito con il bot.</p>
+                            </div>
+        """
+    
+    html_content += """
+                        </div>
+                        <div class="card-footer text-center">
+                            <small>I messaggi vengono salvati nella directory 'chats/'</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    
+    response = make_response(html_content)
+    response.headers['Content-Type'] = 'text/html'
+    return response
+
+@app.route('/admin/chat/<int:user_id>')
+def admin_view_chat(user_id):
+    """Visualizza la chat di un utente specifico"""
+    # Verifica che l'utente sia autorizzato
+    password = request.args.get('password')
+    if password != ADMIN_PASSWORD:
+        return redirect('/admin')
+    
+    # Ottieni la chat dell'utente
+    chats = chat_logger.get_user_chats(user_id)
+    user_chat = chats.get(user_id, [])
+    
+    # Se la chat esiste, prendi il nome utente dal primo messaggio
+    username = "Utente sconosciuto"
+    first_name = "Utente"
+    if user_chat and user_chat[0].get('username'):
+        username = user_chat[0].get('username', 'Nessun username')
+        first_name = user_chat[0].get('first_name', 'Nessun nome')
+    
+    html_content = f"""
+    <!DOCTYPE html>
+    <html lang="it" data-bs-theme="dark">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Chat con {username}</title>
+        <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
+        <style>
+            .message-container {{
+                max-height: 70vh;
+                overflow-y: auto;
+            }}
+            .user-message {{
+                background-color: var(--bs-gray-800);
+                border-radius: 1rem 1rem 0.3rem 1rem;
+                padding: 1rem;
+                margin-bottom: 1rem;
+                max-width: 80%;
+                align-self: flex-end;
+            }}
+            .bot-message {{
+                background-color: var(--bs-gray-700);
+                border-radius: 1rem 1rem 1rem 0.3rem;
+                padding: 1rem;
+                margin-bottom: 1rem;
+                max-width: 80%;
+                align-self: flex-start;
+            }}
+            .timestamp {{
+                font-size: 0.8rem;
+                color: var(--bs-gray-500);
+                margin-top: 0.5rem;
+            }}
+        </style>
+    </head>
+    <body>
+        <div class="container py-4">
+            <div class="row mb-4">
+                <div class="col">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h2>Chat con {username} ({first_name})</h2>
+                        <div>
+                            <a href="/admin/chats?password={ADMIN_PASSWORD}" class="btn btn-outline-secondary">Torna alla lista</a>
+                            <a href="/" class="btn btn-outline-primary ms-2">Home</a>
+                        </div>
+                    </div>
+                    <p class="text-muted">ID Utente: {user_id} - Totale messaggi: {len(user_chat)}</p>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="mb-0">Cronologia Messaggi</h4>
+                        </div>
+                        <div class="card-body message-container">
+    """
+    
+    if user_chat:
+        html_content += """
+                            <div class="d-flex flex-column">
+        """
+        
+        for message in user_chat:
+            timestamp = message.get('timestamp', '').replace('T', ' ').split('.')[0]  # Formatta la data
+            user_message = message.get('user_message', '')
+            bot_response = message.get('bot_response', '')
+            
+            html_content += f"""
+                                <div class="user-message align-self-end">
+                                    <div>{user_message}</div>
+                                    <div class="timestamp">{timestamp}</div>
+                                </div>
+                                <div class="bot-message align-self-start">
+                                    <div>{bot_response}</div>
+                                    <div class="timestamp">{timestamp}</div>
+                                </div>
+            """
+            
+        html_content += """
+                            </div>
+        """
+    else:
+        html_content += """
+                            <div class="alert alert-info">
+                                <p class="mb-0">Nessun messaggio trovato per questo utente.</p>
+                            </div>
+        """
+    
+    html_content += """
+                        </div>
+                        <div class="card-footer text-center">
+                            <small>Fine della conversazione</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <script>
+            // Scroll to bottom of messages on load
+            document.addEventListener('DOMContentLoaded', function() {
+                const messageContainer = document.querySelector('.message-container');
+                messageContainer.scrollTop = messageContainer.scrollHeight;
+            });
+        </script>
+    </body>
+    </html>
+    """
+    
+    response = make_response(html_content)
+    response.headers['Content-Type'] = 'text/html'
+    return response
+
 def main():
     """Start the Flask app."""
     app.run(host="0.0.0.0", port=5000, debug=True)
