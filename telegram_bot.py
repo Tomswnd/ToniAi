@@ -52,13 +52,15 @@ def start_command(message):
             "toniai qual è la capitale dell'Italia?\n\n"
             "Puoi anche usare:\n"
             "toniai /reset - Per cancellare la cronologia della conversazione\n"
-            "toniai /help - Per vedere questa guida"
+            "toniai /help - Per vedere questa guida\n"
+            "toniai /gruppi - Per informazioni sull'uso nei gruppi"
         )
     else:
         welcome_message += (
             "Puoi chiedermi qualsiasi cosa e cercherò di aiutarti nel migliore dei modi.\n\n"
             "Usa /reset per cancellare la cronologia della conversazione e iniziare una nuova chat.\n"
-            "Usa /help per vedere l'elenco dei comandi disponibili."
+            "Usa /help per vedere l'elenco dei comandi disponibili.\n"
+            "Usa /gruppi per informazioni sull'uso del bot nei gruppi Telegram."
         )
     
     bot.reply_to(message, welcome_message)
@@ -85,6 +87,10 @@ def help_command(message):
             logger.info(f"Comando ignorato in gruppo: '{message_text}'")
             return
     
+    # Ottieni il nome utente del bot
+    bot_info = bot.get_me()
+    bot_username = bot_info.username
+    
     # Prepara il messaggio di aiuto in base al tipo di chat
     if is_group_chat:
         help_message = (
@@ -93,7 +99,9 @@ def help_command(message):
             "Comandi disponibili:\n"
             "toniai /start - Mostra messaggio di benvenuto\n"
             "toniai /help - Mostra questa lista di comandi\n"
-            "toniai /reset - Cancella la cronologia della conversazione\n\n"
+            "toniai /reset - Cancella la cronologia della conversazione\n"
+            "toniai /gruppi - Informazioni sull'uso nei gruppi\n\n"
+            "Puoi anche usare: /comando@" + bot_username + "\n\n"
             "Esempio: toniai raccontami una storia\n\n"
             f"Questo bot è stato sviluppato da {BOT_OWNER} su Telegram."
         )
@@ -102,7 +110,8 @@ def help_command(message):
             "Ecco i comandi disponibili:\n\n"
             "/start - Inizia una conversazione con il bot\n"
             "/help - Mostra questa lista di comandi\n"
-            "/reset - Cancella la cronologia della conversazione e inizia una nuova chat\n\n"
+            "/reset - Cancella la cronologia della conversazione\n"
+            "/gruppi - Informazioni sull'uso del bot nei gruppi\n\n"
             "Puoi semplicemente scrivermi un messaggio e io risponderò!\n\n"
             f"Questo bot è stato sviluppato da {BOT_OWNER} su Telegram."
         )
@@ -246,6 +255,54 @@ def handle_message(message):
             username=username,
             first_name=first_name
         )
+
+@bot.message_handler(commands=['gruppi', 'groups'])
+def groups_command(message):
+    """Spiega come funziona il bot nei gruppi Telegram"""
+    # Log del comando
+    logger.info(f"Comando /gruppi ricevuto: {message.text}")
+    
+    # Verifica se il messaggio è in una chat di gruppo
+    is_group_chat = message.chat.type in ['group', 'supergroup']
+    logger.info(f"Comando in gruppo: {is_group_chat}")
+    
+    # Nei gruppi, rispondi solo se il comando inizia con 'toniai' o è di tipo menzione
+    if is_group_chat:
+        message_text = message.text if message.text else ""
+        logger.info(f"Testo comando in gruppo: '{message_text}'")
+        
+        # Controlla anche se è un comando diretto al bot tramite @nome_bot
+        if (not message_text.lower().startswith('toniai') and 
+            not message_text.startswith('/gruppi@') and
+            not message_text.startswith('/groups@')):
+            logger.info(f"Comando ignorato in gruppo: '{message_text}'")
+            return
+    
+    # Ottieni il nome utente del bot
+    bot_info = bot.get_me()
+    bot_username = bot_info.username
+    
+    # Prepara il messaggio di spiegazione
+    group_message = f"""
+📢 *Come usare il bot nei gruppi*
+
+Nei gruppi Telegram, rispondo solo ai messaggi che iniziano con la parola "toniai" (senza distinzione tra maiuscole e minuscole).
+
+*Esempi:*
+• `toniai ciao` → risponderò al tuo messaggio
+• `toniai raccontami una storia` → racconterò una storia
+• `toniai qual è la capitale d'Italia?` → risponderò alla tua domanda
+• `ciao a tutti` → non risponderò (manca "toniai")
+
+*Comandi nei gruppi:*
+Puoi usare i comandi in due modi:
+1. `toniai /comando` (es: `toniai /help`)
+2. `/comando@{bot_username}` (es: `/help@{bot_username}`)
+
+*Puoi aggiungermi ai tuoi gruppi!*
+"""
+    
+    bot.reply_to(message, group_message, parse_mode="Markdown")
 
 @bot.message_handler(commands=['debug'])
 def debug_command(message):

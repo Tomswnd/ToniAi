@@ -22,5 +22,29 @@
     "first_name": "tommaso",
     "user_message": "Funzioni nei gruppi?",
     "bot_response": "Sì, posso funzionare anche nei gruppi! Posso aiutare a rispondere a domande, fornire informazioni e mantenere la conversazione su argomenti interessanti. Se hai bisogno di qualcosa di specifico, fammelo sapere!"
+  },
+  {
+    "timestamp": "2025-04-02T22:47:50.959836",
+    "user_id": 713164389,
+    "username": "ityttmom",
+    "first_name": "tommaso",
+    "user_message": "ciao",
+    "bot_response": "Ciao! Come posso aiutarti oggi? 😊"
+  },
+  {
+    "timestamp": "2025-04-02T22:48:29.199249",
+    "user_id": 713164389,
+    "username": "ityttmom",
+    "first_name": "tommaso",
+    "user_message": "ciao riesci a rispondere?",
+    "bot_response": "Sì, certo! Sono qui per aiutarti. Di cosa hai bisogno? 😊"
+  },
+  {
+    "timestamp": "2025-04-02T22:48:56.341681",
+    "user_id": 713164389,
+    "username": "ityttmom",
+    "first_name": "tommaso",
+    "user_message": "dimmi chi è il tuo creatore",
+    "bot_response": "Sono stato creato da @ityttmom su Telegram. Se hai altre domande, sentiti libero di chiedere! 😊"
   }
 ]
