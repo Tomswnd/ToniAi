@@ -7,7 +7,8 @@ import threading
 import requests
 import time
 import datetime
-from flask import Flask, jsonify, render_template, make_response, request, redirect, url_for
+import secrets
+from flask import Flask, jsonify, render_template, make_response, request, redirect, url_for, session
 import atexit
 from openai import OpenAI
 from config import OPENAI_API_KEY, BOT_OWNER, ADMIN_PASSWORD
@@ -22,6 +23,8 @@ logger = logging.getLogger(__name__)
 
 # Create a Flask app
 app = Flask(__name__)
+# Configurazione della sessione (necessaria per l'autenticazione)
+app.secret_key = secrets.token_hex(16)
 
 # Global variable to keep track of bot process
 bot_process = None
@@ -516,6 +519,8 @@ def admin_login_check():
     password = request.form.get('password')
     
     if password == ADMIN_PASSWORD:
+        # Imposta la sessione come autenticata
+        session['admin_authenticated'] = True
         # Redirect to admin panel
         return redirect('/admin/chats')
     else:
@@ -547,9 +552,8 @@ def admin_login_check():
 @app.route('/admin/chats')
 def admin_chats():
     """Pagina per visualizzare le chat degli utenti"""
-    # Verifica che l'utente sia autorizzato (qui semplificato, normalmente userei sessioni)
-    password = request.args.get('password')
-    if password != ADMIN_PASSWORD and 'password' not in request.args:
+    # Verifica che l'utente sia autenticato tramite la sessione
+    if not session.get('admin_authenticated'):
         return redirect('/admin')
     
     # Ottieni l'elenco degli utenti
@@ -578,7 +582,10 @@ def admin_chats():
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h4 class="mb-0">Utenti ({len(users)})</h4>
-                            <a href="/" class="btn btn-sm btn-outline-secondary">Torna alla Home</a>
+                            <div>
+                                <a href="/admin/logout" class="btn btn-sm btn-outline-danger">Logout</a>
+                                <a href="/" class="btn btn-sm btn-outline-secondary ms-2">Torna alla Home</a>
+                            </div>
                         </div>
                         <div class="card-body p-0">
     """
@@ -615,7 +622,7 @@ def admin_chats():
                                             <td>{last_message}</td>
                                             <td>{message_count}</td>
                                             <td>
-                                                <a href="/admin/chat/{user_id}?password={ADMIN_PASSWORD}" class="btn btn-sm btn-info">Visualizza</a>
+                                                <a href="/admin/chat/{user_id}" class="btn btn-sm btn-info">Visualizza</a>
                                             </td>
                                         </tr>
             """
@@ -652,9 +659,8 @@ def admin_chats():
 @app.route('/admin/chat/<int:user_id>')
 def admin_view_chat(user_id):
     """Visualizza la chat di un utente specifico"""
-    # Verifica che l'utente sia autorizzato
-    password = request.args.get('password')
-    if password != ADMIN_PASSWORD:
+    # Verifica che l'utente sia autenticato
+    if not session.get('admin_authenticated'):
         return redirect('/admin')
     
     # Ottieni la chat dell'utente
@@ -711,8 +717,9 @@ def admin_view_chat(user_id):
                     <div class="d-flex justify-content-between align-items-center">
                         <h2>Chat con {username} ({first_name})</h2>
                         <div>
-                            <a href="/admin/chats?password={ADMIN_PASSWORD}" class="btn btn-outline-secondary">Torna alla lista</a>
+                            <a href="/admin/chats" class="btn btn-outline-secondary">Torna alla lista</a>
                             <a href="/" class="btn btn-outline-primary ms-2">Home</a>
+                            <a href="/admin/logout" class="btn btn-outline-danger ms-2">Logout</a>
                         </div>
                     </div>
                     <p class="text-muted">ID Utente: {user_id} - Totale messaggi: {len(user_chat)}</p>
@@ -776,6 +783,38 @@ def admin_view_chat(user_id):
                 messageContainer.scrollTop = messageContainer.scrollHeight;
             });
         </script>
+    </body>
+    </html>
+    """
+    
+    response = make_response(html_content)
+    response.headers['Content-Type'] = 'text/html'
+    return response
+
+@app.route('/admin/logout')
+def admin_logout():
+    """Effettua il logout dall'area amministrativa"""
+    # Rimuovi la sessione di autenticazione
+    session.pop('admin_authenticated', None)
+    
+    # Redirect alla pagina di login con messaggio di successo
+    html_content = """
+    <!DOCTYPE html>
+    <html lang="it" data-bs-theme="dark">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Logout effettuato</title>
+        <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
+        <meta http-equiv="refresh" content="2;url=/" />
+    </head>
+    <body>
+        <div class="container py-5 text-center">
+            <div class="alert alert-success">
+                <h4>Logout effettuato con successo</h4>
+                <p>Stai per essere reindirizzato alla home page...</p>
+            </div>
+        </div>
     </body>
     </html>
     """
