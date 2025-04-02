@@ -256,11 +256,11 @@ def handle_message(message):
             first_name=first_name
         )
 
-@bot.message_handler(commands=['gruppi', 'groups', 'group', 'gruppo', 'grupi', 'gruupi'])
+@bot.message_handler(commands=['gruppi', 'groups'])
 def groups_command(message):
     """Spiega come funziona il bot nei gruppi Telegram"""
-    # Log del comando
-    logger.info(f"Comando /gruppi ricevuto: {message.text}")
+    # Log dettagliato per i comandi
+    logger.info(f"Comando /gruppi o /groups ricevuto: {message.text}")
     
     # Verifica se il messaggio è in una chat di gruppo
     is_group_chat = message.chat.type in ['group', 'supergroup']
@@ -268,26 +268,14 @@ def groups_command(message):
     
     # Nei gruppi, rispondi solo se il comando inizia con 'toniai' o è di tipo menzione
     if is_group_chat:
+        # Per i comandi nei gruppi, controlla se il testo completo inizia con 'toniai'
         message_text = message.text if message.text else ""
         logger.info(f"Testo comando in gruppo: '{message_text}'")
         
-        # Controlla se è un comando diretto al bot tramite @nome_bot o inizia con toniai
-        
-        # Lista di tutti i possibili inizi di comando supportati
-        valid_prefixes = [
-            '/gruppi@', '/groups@', '/group@', '/gruppo@', '/grupi@', '/gruupi@', 
-            'toniai'
-        ]
-        
-        # Verifica se il messaggio inizia con uno dei prefissi validi
-        is_valid_command = False
-        for prefix in valid_prefixes:
-            if message_text.lower().startswith(prefix):
-                is_valid_command = True
-                logger.info(f"Comando valido trovato con prefisso: '{prefix}'")
-                break
-                
-        if not is_valid_command:
+        # Controlla anche se è un comando diretto al bot tramite @nome_bot
+        if (not message_text.lower().startswith('toniai') and 
+            not message_text.startswith('/gruppi@') and
+            not message_text.startswith('/groups@')):
             logger.info(f"Comando ignorato in gruppo: '{message_text}'")
             return
     
