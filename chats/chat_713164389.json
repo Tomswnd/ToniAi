@@ -150,5 +150,29 @@
     "first_name": "tommaso",
     "user_message": "Toniai /reset",
     "bot_response": "It seems like you're trying to reset something. Could you clarify what you would like to reset? I'm here to help!"
+  },
+  {
+    "timestamp": "2025-04-02T23:05:28.996485",
+    "user_id": 713164389,
+    "username": "ityttmom",
+    "first_name": "tommaso",
+    "user_message": "Che versione usi",
+    "bot_response": "Non ho una versione specifica, ma sono un assistente virtuale progettato per fornire informazioni e assistenza. Come posso aiutarti oggi?"
+  },
+  {
+    "timestamp": "2025-04-02T23:05:36.712007",
+    "user_id": 713164389,
+    "username": "ityttmom",
+    "first_name": "tommaso",
+    "user_message": "Che versione di chatgpt usi",
+    "bot_response": "Non uso una versione specifica di ChatGPT. Sono un assistente virtuale che fornisce informazioni e supporto basato su una varietà di dati. Se hai domande o hai bisogno di aiuto, chiedi pure!"
+  },
+  {
+    "timestamp": "2025-04-02T23:06:14.968754",
+    "user_id": 713164389,
+    "username": "ityttmom",
+    "first_name": "tommaso",
+    "user_message": "Che versione di chatgpt usi?",
+    "bot_response": "Non ho accesso a informazioni specifiche sulle versioni di ChatGPT. Sono qui per assisterti con le tue domande e fornire supporto! Come posso aiutarti oggi?"
   }
 ]
