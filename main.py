@@ -11,7 +11,10 @@ import secrets
 from flask import Flask, jsonify, render_template, make_response, request, redirect, url_for, session
 import atexit
 from openai import OpenAI
-from config import OPENAI_API_KEY, BOT_OWNER, ADMIN_PASSWORD
+import os
+
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
+BOT_OWNER = os.environ.get("BOT_TOKEN")
 from chat_logger import chat_logger
 
 # Configure logging
