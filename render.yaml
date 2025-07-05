@@ -8,4 +8,6 @@ services:
     startCommand: "python telegram_bot.py"
     envVars:
       - key: BOT_TOKEN
-        value: inserisci_il_tuo_token
+        fromEnvVar: BOT_TOKEN
+      - key: OPENAI_API_KEY
+        fromEnvVar: OPENAI_API_KEY
