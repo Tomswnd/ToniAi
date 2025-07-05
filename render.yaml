@@ -1,0 +1,11 @@
+# render.yaml
+services:
+  - type: web
+    name: toni-ai-bot
+    env: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python telegram_bot.py"
+    envVars:
+      - key: BOT_TOKEN
+        value: inserisci_il_tuo_token
