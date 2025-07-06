@@ -5,9 +5,11 @@ services:
     env: python
     plan: free
     buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn main:app"
+    startCommand: "python main.py"
     envVars:
       - key: BOT_TOKEN
         fromEnvVar: BOT_TOKEN
       - key: OPENAI_API_KEY
         fromEnvVar: OPENAI_API_KEY
+      - key: ADMIN_PASSWORD
+        fromEnvVar: ADMIN_PASSWORD
