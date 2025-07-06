@@ -12,9 +12,14 @@ from flask import Flask, jsonify, render_template, make_response, request, redir
 import atexit
 from openai import OpenAI
 import os
+import tempfile
+
+from config import BOT_OWNER
 
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
-BOT_OWNER = os.environ.get("BOT_TOKEN")
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD")
+BOT_OWNER = "@ityttmom"
+
 from chat_logger import chat_logger
 
 # Configure logging
@@ -51,7 +56,7 @@ def index():
         
         # Send a minimal request to check API status
         response = openai_client.chat.completions.create(
-            model="gpt-4o",
+            model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
                 {"role": "user", "content": "Hello, are you working?"}
@@ -280,8 +285,16 @@ def start_bot():
         logger.info("Starting Telegram bot process...")
         
         # Create log files for stdout and stderr
-        stdout_log = open('/tmp/bot_stdout.log', 'w')
-        stderr_log = open('/tmp/bot_stderr.log', 'w')
+        # stdout_log = open('/tmp/bot_stdout.log', 'w')
+        # stderr_log = open('/tmp/bot_stderr.log', 'w')
+        # Per windows locale
+        # stdout_log = open('bot_stdout.log', 'w')
+        # stderr_log = open('bot_stderr.log', 'w')
+
+        # Per render
+        log_dir = tempfile.gettempdir()
+        stdout_log = open(os.path.join(log_dir, 'bot_stdout.log'), 'w')
+        stderr_log = open(os.path.join(log_dir, 'bot_stderr.log'), 'w')
         
         bot_process = subprocess.Popen(
             [sys.executable, "bot_runner.py"],
@@ -356,11 +369,16 @@ def ping():
 @app.route('/keep-alive-info')
 def keep_alive_info():
     """Pagina informativa sul sistema di keep-alive"""
-    replit_url = os.environ.get('REPLIT_DB_URL', '').split('//')[1].split('.')[0] 
-    if replit_url:
-        ping_url = f"https://{replit_url}.repl.co/ping"
-    else:
-        ping_url = "http://localhost:5000/ping"
+    # replit_url = os.environ.get('REPLIT_DB_URL', '').split('//')[1].split('.')[0]
+    # if replit_url:
+    #     ping_url = f"https://{replit_url}.repl.co/ping"
+    # else:
+    #     ping_url = "http://localhost:5000/ping"
+    # per windows
+    # ping_url = "http://localhost:5000/ping"
+    # Per render
+    render_url = os.environ.get('RENDER_EXTERNAL_URL', 'http://localhost:5000')
+    ping_url = f"{render_url}/ping"
     
     html_content = f"""
     <!DOCTYPE html>
@@ -827,8 +845,11 @@ def admin_logout():
     return response
 
 def main():
-    """Start the Flask app."""
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    # Per windows
+    # app.run(host="0.0.0.0", port=5000, debug=True)
+    # Per render
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host="0.0.0.0", port=port, debug=False)
     
 if __name__ == '__main__':
     main()
