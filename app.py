@@ -15,6 +15,9 @@ import os
 import tempfile
 
 from config import BOT_OWNER
+# Per windows, ricorda di attivare anche su config.py
+# from dotenv import load_dotenv
+# load_dotenv('secrets.env')
 
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD")

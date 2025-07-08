@@ -1,5 +1,9 @@
 import os
 import logging
+# per windows
+# from dotenv import load_dotenv
+# load_dotenv('secrets.env')
+
 # Configure logging
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
