@@ -183,35 +183,35 @@ def handle_message(message):
     username = message.from_user.username
     first_name = message.from_user.first_name
 
-    # 📸 Se il messaggio contiene un'immagine
-    if message.content_type == 'photo':
-        logger.info("Messaggio contiene un'immagine. La analizzerò con GPT-4o.")
-
-        # Prendi la foto con la massima risoluzione
-        photo = message.photo[-1]
-        file_info = bot.get_file(photo.file_id)
-        downloaded_file = bot.download_file(file_info.file_path)
-
-        # Converti in base64 per l'API OpenAI
-        import base64
-        encoded_image = base64.b64encode(downloaded_file).decode('utf-8')
-
-        bot.send_chat_action(chat_id, 'typing')
-
-        # Analizza immagine con GPT-4o
-        response = openai_handler.analyze_image(user_id, encoded_image)
-
-        bot.reply_to(message, response)
-
-        # Log
-        chat_logger.log_message(
-            user_id=user_id,
-            user_message="[Immagine]",
-            bot_response=response,
-            username=username,
-            first_name=first_name
-        )
-        return
+    # # 📸 Se il messaggio contiene un'immagine
+    # if message.content_type == 'photo':
+    #     logger.info("Messaggio contiene un'immagine. La analizzerò con GPT-4o.")
+    #
+    #     # Prendi la foto con la massima risoluzione
+    #     photo = message.photo[-1]
+    #     file_info = bot.get_file(photo.file_id)
+    #     downloaded_file = bot.download_file(file_info.file_path)
+    #
+    #     # Converti in base64 per l'API OpenAI
+    #     import base64
+    #     encoded_image = base64.b64encode(downloaded_file).decode('utf-8')
+    #
+    #     bot.send_chat_action(chat_id, 'typing')
+    #
+    #     # Analizza immagine con GPT-4o
+    #     response = openai_handler.analyze_image(user_id, encoded_image)
+    #
+    #     bot.reply_to(message, response)
+    #
+    #     # Log
+    #     chat_logger.log_message(
+    #         user_id=user_id,
+    #         user_message="[Immagine]",
+    #         bot_response=response,
+    #         username=username,
+    #         first_name=first_name
+    #     )
+    #     return
     
     # Log dettagliato del testo del messaggio
     logger.info(f"Testo messaggio: '{message_text}'")
