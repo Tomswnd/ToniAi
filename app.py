@@ -59,7 +59,7 @@ def index():
 
         # Send a minimal request to check API status
         response = openai_client.chat.completions.create(
-            model="gpt-4o-mini",
+            model="gpt-5-nano",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
                 {"role": "user", "content": "Hello, are you working?"}

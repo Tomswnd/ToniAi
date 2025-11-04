@@ -21,9 +21,8 @@ if not OPENAI_API_KEY:
     raise ValueError("OPENAI_API_KEY environment variable not set")
 
 # OpenAI model configuration
-# Utilizzando la versione mini che è più veloce e meno costosa
-# Cambiato su richiesta dell'utente dal modello "gpt-4o" al modello "gpt-4o-mini"
-OPENAI_MODEL = "gpt-4o-mini"
+# Utilizzando la versione nano che è più veloce e meno costosa
+OPENAI_MODEL = "gpt-5-nano"
 
 # Bot owner information
 BOT_OWNER = "@ityttmom"
